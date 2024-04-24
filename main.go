@@ -1,37 +1,34 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-	"strings"
 )
 
 type Inter interface {
-  car() string
+	car() (string, error)
 }
 
-type Car struct{
-  name string
+type Car struct {
+	name string
 }
 
-//here type Car implements interface Inter but we don't have to specify it cause it's defined implicitly
-func (c *Car) car() string{
-  return c.name
-}
-
-type NewString string
-
-// here we have a new method with same name but diffrent underlying type of NewString
-func (i NewString) car() string{
-  up := strings.ToUpper(string(i))
-  return up
+func (c *Car) car() (string, error) {
+	if c == nil {
+		return "nil", errors.New("nil pointer")
+	}
+	return c.name, nil
 }
 
 func main() {
-  var i Inter 
-  i = &Car{"Bugatti"}
-  fmt.Println(i.car())
+	var i Inter
+	var t *Car
+	i = t
 
-  //here the the underlying method type changed so interface opts for that method.
-  i = NewString(i.car())
-  fmt.Println(i.car())
+	a, err := i.car()
+	fmt.Println(a, "\t", err)
+
+	i = &Car{"Bugatti"}
+	fmt.Println(i.car())
+
 }
